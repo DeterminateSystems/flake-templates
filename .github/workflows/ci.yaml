@@ -25,6 +25,17 @@ jobs:
         run: |
           nix flake show
 
+      - name: Ensure that all templates evaluate
+        run: |
+          for dir in $(ls -d */); do
+            (
+              echo "Checking the template in directory ${dir}"
+              cd $dir
+              nix flake check --all-systems
+              echo "Successfully checked the template in ${dir}"
+            )
+          done
+
       - name: Check Nix formatting
         run: |
           git ls-files "*.nix" | \
