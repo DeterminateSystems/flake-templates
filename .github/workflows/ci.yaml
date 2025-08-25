@@ -1,0 +1,42 @@
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - v?[0-9]+.[0-9]+.[0-9]+*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: DeterminateSystems/determinate-nix-action@main
+
+      - uses: DeterminateSystems/flakehub-cache-action@main
+
+      - name: Ensure flake is properly structured
+        run: |
+          nix flake show
+
+      - name: Ensure that all templates evaluate
+        run: |
+          for dir in $(ls -d */); do
+            (
+              echo "Checking the template in directory ${dir}"
+              cd $dir
+              nix flake check --all-systems
+              echo "Successfully checked the template in ${dir}"
+            )
+          done
+
+      - name: Check Nix formatting
+        run: |
+          git ls-files "*.nix" | \
+            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
