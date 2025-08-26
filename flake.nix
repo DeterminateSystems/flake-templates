@@ -9,7 +9,7 @@
           description = "Default flake template";
           path = ./default;
           welcomeText = ''
-            # Welcome to your new Nix flake ❄️🍁 foo
+            # Welcome to your new Nix flake ❄️🍁
 
             To activate your new flake's development environment, run `nix develop` or `direnv allow` if you use direnv.
 
