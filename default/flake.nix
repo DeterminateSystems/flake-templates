@@ -6,7 +6,7 @@
 
   # Flake outputs
   outputs =
-    inputs:
+    { self, ... }@inputs:
     let
       # The systems supported for this flake's outputs
       supportedSystems = [
