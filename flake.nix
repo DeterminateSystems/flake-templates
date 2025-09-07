@@ -22,6 +22,12 @@
                 https://zero-to-nix.com
           '';
         };
+
+        nix-darwin = {
+          description = "TODO";
+          path = ./nix-darwin;
+          welcomeText = "TODO";
+        };
       };
     };
 }
