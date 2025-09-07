@@ -43,11 +43,15 @@
         { pkgs, system }:
         {
           # Run `nix develop` to activate this environment or `direnv allow` if you have direnv installed
-          default = pkgs.mkShell {
+          default = pkgs.mkShellNoCC {
             # The Nix packages provided in the environment
             packages = with pkgs; [
               # Add the flake's formatter to your project's environment
               self.formatter.${system}
+
+              # Other packages
+              curl
+              jq
             ];
 
             # Set any environment variables for your development environment
