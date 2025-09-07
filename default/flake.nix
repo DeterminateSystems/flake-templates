@@ -22,6 +22,7 @@
         inputs.nixpkgs.lib.genAttrs supportedSystems (
           system:
           f {
+            inherit system;
             pkgs = import inputs.nixpkgs {
               inherit system;
               # Enable using unfree packages
