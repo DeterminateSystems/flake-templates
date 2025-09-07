@@ -23,6 +23,7 @@
           system:
           f {
             inherit system;
+            # Provides a system-specific, configured Nixpkgs
             pkgs = import inputs.nixpkgs {
               inherit system;
               # Enable using unfree packages
