@@ -28,34 +28,6 @@
       system = "aarch64-darwin"; # or use x86_64-darwin for Intel macOS
     in
     {
-      # Development environment
-      devShells.${system}.default =
-        let
-          pkgs = import inputs.nixpkgs { inherit system; };
-        in
-        pkgs.mkShellNoCC {
-          packages = with pkgs; [
-            # Shell script for applying the nix-darwin configuration.
-            # Run this to apply the configuration in this flake to your macOS system.
-            (writeShellApplication {
-              name = "reload-nix-darwin-configuration";
-              runtimeInputs = [
-                # Make the darwin-rebuild package available in the script
-                inputs.nix-darwin.packages.${system}.darwin-rebuild
-              ];
-              text = ''
-                echo "> Applying nix-darwin configuration..."
-
-                echo "> Running darwin-rebuild switch as root..."
-                sudo darwin-rebuild switch --flake .
-                echo "> darwin-rebuild switch was successful ✅"
-
-                echo "> macOS config was successfully applied 🚀"
-              '';
-            })
-          ];
-        };
-
       # nix-darwin configuration output
       darwinConfigurations."${username}-${system}" = inputs.nix-darwin.lib.darwinSystem {
         inherit system;
@@ -133,5 +105,33 @@
 
         # Add other module outputs here
       };
+
+      # Development environment
+      devShells.${system}.default =
+        let
+          pkgs = import inputs.nixpkgs { inherit system; };
+        in
+        pkgs.mkShellNoCC {
+          packages = with pkgs; [
+            # Shell script for applying the nix-darwin configuration.
+            # Run this to apply the configuration in this flake to your macOS system.
+            (writeShellApplication {
+              name = "reload-nix-darwin-configuration";
+              runtimeInputs = [
+                # Make the darwin-rebuild package available in the script
+                inputs.nix-darwin.packages.${system}.darwin-rebuild
+              ];
+              text = ''
+                echo "> Applying nix-darwin configuration..."
+
+                echo "> Running darwin-rebuild switch as root..."
+                sudo darwin-rebuild switch --flake .
+                echo "> darwin-rebuild switch was successful ✅"
+
+                echo "> macOS config was successfully applied 🚀"
+              '';
+            })
+          ];
+        };
     };
 }
