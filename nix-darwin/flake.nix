@@ -21,11 +21,16 @@
   outputs =
     { self, ... }@inputs:
     let
+      # The values for `username` and `system` supplied here are used to construct the hostname
+      # for your system, of the form `${username}-${system}`. Set these values to what you'd like
+      # the output of `scutil --get LocalHostName` to be.
+
       # Your system username
       username = "just-me-123";
 
-      # Your system type
-      system = "aarch64-darwin"; # or use x86_64-darwin for Intel macOS
+      # Your system type (Apple Silicon here)
+      # Change this to `x86_64-darwin` for Intel macOS
+      system = "aarch64-darwin";
     in
     {
       # nix-darwin configuration output
@@ -37,9 +42,10 @@
           # Apply the modules output by this flake
           self.darwinModules.base
           self.darwinModules.nixConfig
-          # Apply other modules here
+          # Apply any other imported modules here
 
-          # Inline module
+          # In addition to adding modules in the style above, you can also
+          # add modules inline like this. Delete this if unnecessary.
           (
             {
               config,
@@ -48,8 +54,7 @@
               ...
             }:
             {
-              # In addition to adding modules in the style above, you can also
-              # add modules inline like this.
+              # Inline nix-darwin configuration
             }
           )
         ];
