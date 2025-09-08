@@ -25,7 +25,7 @@
       username = "just-me-123";
 
       # Your system type
-      system = "aarch64-darwin"; # or use x86_64-linux for Intel macOS
+      system = "aarch64-darwin"; # or use x86_64-darwin for Intel macOS
     in
     {
       # Development environment
