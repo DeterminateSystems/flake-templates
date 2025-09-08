@@ -62,28 +62,38 @@
         modules = [
           # Add the determinate nix-darwin module
           inputs.determinate.darwinModules.default
-          # Apply the module output by this flake
+          # Apply the modules output by this flake
           self.darwinModules.base
+          self.darwinModules.nixConfig
+          # Apply other modules here
+
+          # Inline module
+          (
+            {
+              config,
+              pkgs,
+              lib,
+              ...
+            }:
+            {
+              # In addition to adding modules in the style above, you can also
+              # add modules inline like this.
+            }
+          )
         ];
       };
 
-      # nix-darwin modules outputs
+      # nix-darwin module outputs
       darwinModules = {
+        # Some base configuration
         base =
-          { ... }:
           {
-            # Let Determinate Nix handle your Nix configuration
-            nix.enable = false;
-
-            # Custom Determinate Nix settings written to /etc/nix/nix.custom.conf
-            determinate-nix.customSettings = {
-              eval-core = 0;
-              extra-experimental-features = [
-                "build-time-fetch-tree"
-                "parallel-eval"
-              ];
-            };
-
+            config,
+            pkgs,
+            lib,
+            ...
+          }:
+          {
             # Required for nix-darwin to work
             system.stateVersion = 1;
 
@@ -97,7 +107,31 @@
             # See here: https://nix-darwin.github.io/nix-darwin/manual
           };
 
-        # Add other modules here
+        # Nix configuration
+        nixConfig =
+          {
+            config,
+            pkgs,
+            lib,
+            ...
+          }:
+          {
+            # Let Determinate Nix handle your Nix configuration
+            nix.enable = false;
+
+            # Custom Determinate Nix settings written to /etc/nix/nix.custom.conf
+            determinate-nix.customSettings = {
+              # Enables parallel evaluation (remove this setting or set the value to 1 to disable)
+              eval-core = 0;
+              extra-experimental-features = [
+                "build-time-fetch-tree" # Enables build-time flake inputs
+                "parallel-eval" # Enables parallel evaluation
+              ];
+              # Other settings
+            };
+          };
+
+        # Add other module outputs here
       };
     };
 }
