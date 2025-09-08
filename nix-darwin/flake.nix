@@ -32,7 +32,6 @@
       devShells.${system}.default =
         let
           pkgs = import inputs.nixpkgs { inherit system; };
-          darwin-rebuild = inputs.nixpkgs.lib.getExe inputs.nix-darwin.packages.${system}.darwin-rebuild;
         in
         pkgs.mkShellNoCC {
           packages = with pkgs; [
@@ -41,7 +40,8 @@
             (writeShellApplication {
               name = "reload-nix-darwin-configuration";
               runtimeInputs = [
-                darwin-rebuild
+                # Make the darwin-rebuild package available in the script
+                inputs.nix-darwin.packages.${system}.darwin-rebuild
               ];
               text = ''
                 echo "> Applying nix-darwin configuration..."
