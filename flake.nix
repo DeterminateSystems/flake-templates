@@ -6,7 +6,7 @@
     {
       templates = {
         default = {
-          description = "Default flake template";
+          description = "Default flake template for Determinate Nix";
           path = ./default;
           welcomeText = ''
             # Welcome to your new Nix flake ❄️🍁
@@ -24,9 +24,21 @@
         };
 
         nix-darwin = {
-          description = "TODO";
+          description = "A flake template for nix-darwin and Determinate Nix";
           path = ./nix-darwin;
-          welcomeText = "TODO";
+          welcomeText = ''
+            # Welcome to your new nix-darwin configuration flake ❄️🍁🍎
+
+            Before applying this configuration, change the `username` and `system` to values that make sense for your macOS machine.
+
+            To apply the nix-darwin configuration in this flake, run the supplied script:
+
+                nix develop --command reload-nix-darwin-configuration
+
+            For ideas on how to configure your system, consult the nix-darwin reference documentation:
+
+                https://nix-darwin.github.io/nix-darwin/manual
+          '';
         };
       };
     };

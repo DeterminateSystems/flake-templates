@@ -36,12 +36,16 @@
         in
         pkgs.mkShellNoCC {
           packages = with pkgs; [
+            # Shell script for applying the nix-darwin configuration.
+            # Run this to apply the configuration in this flake to your macOS system.
             (writeShellApplication {
               name = "reload-nix-darwin-configuration";
               runtimeInputs = [
                 darwin-rebuild
               ];
               text = ''
+                echo "> Applying nix-darwin configuration..."
+
                 echo "> Running darwin-rebuild switch as root..."
                 sudo darwin-rebuild switch --flake .
                 echo "> darwin-rebuild switch was successful ✅"
@@ -58,7 +62,7 @@
         modules = [
           # Add the determinate nix-darwin module
           inputs.determinate.darwinModules.default
-          # Apply the modules output by this flake
+          # Apply the module output by this flake
           self.darwinModules.base
         ];
       };
@@ -80,15 +84,20 @@
               ];
             };
 
+            # Required for nix-darwin to work
             system.stateVersion = 1;
 
             users.users.${username} = {
               name = username;
+              # See the reference docs for more on user config:
+              # https://nix-darwin.github.io/nix-darwin/manual/#opt-users.users
             };
 
             # Other configuration parameters
             # See here: https://nix-darwin.github.io/nix-darwin/manual
           };
+
+        # Add other modules here
       };
     };
 }
