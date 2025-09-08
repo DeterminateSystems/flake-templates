@@ -28,6 +28,31 @@
       system = "aarch64-darwin"; # or use x86_64-linux for Intel macOS
     in
     {
+      # Development environment
+      devShells.${system}.default =
+        let
+          pkgs = import inputs.nixpkgs { inherit system; };
+          darwin-rebuild = inputs.nixpkgs.lib.getExe inputs.nix-darwin.packages.${system}.darwin-rebuild;
+        in
+        pkgs.mkShellNoCC {
+          packages = with pkgs; [
+            (writeShellApplication {
+              name = "reload-nix-darwin-configuration";
+              runtimeInputs = [
+                darwin-rebuild
+              ];
+              text = ''
+                echo "> Running darwin-rebuild switch as root..."
+                sudo darwin-rebuild switch --flake .
+                echo "> darwin-rebuild switch was successful ✅"
+
+                echo "> macOS config was successfully applied 🚀"
+              '';
+            })
+          ];
+        };
+
+      # nix-darwin configuration output
       darwinConfigurations."${username}-${system}" = inputs.nix-darwin.lib.darwinSystem {
         inherit system;
         modules = [
@@ -38,6 +63,7 @@
         ];
       };
 
+      # nix-darwin modules outputs
       darwinModules = {
         base =
           { ... }:
