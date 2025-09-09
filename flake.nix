@@ -40,6 +40,12 @@
                 https://nix-darwin.github.io/nix-darwin/manual
           '';
         };
+
+        nixos = {
+          description = "A flake template for NixOS with Determinate Nix";
+          path = ./nixos;
+          welcomeText = "TODO";
+        };
       };
     };
 }
