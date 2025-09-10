@@ -4,25 +4,43 @@
   # Flake inputs
   inputs = {
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # Stable Nixpkgs
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3"; # Determinate 3.*
   };
 
   # Flake outputs
   outputs =
     { self, ... }@inputs:
     {
-      # NixOS configurations output by this flake
+      # A minimal (but updatable!) NixOS configuration output by this flake
       nixosConfigurations.my-system = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+        system = "x86_64-linux"; # change this if you're building for a different system type
+
         modules = [
           # Load the Determinate module, which provides Determinate Nix
           inputs.determinate.nixosModules.default
 
+          # Load the hardware configuration in a separate file (this is a common convention for NixOS)
           ./hardware-configuration.nix
+
+          # Modules defined in this flake
+          self.nixosModules.base
         ];
+
         specialArgs = {
           # Values to pass to modules
         };
+      };
+
+      # NixOS modules output by this flake
+      nixosModules = {
+        # This provides a minimum viable NixOS configuration
+        base =
+          { config, lib, ... }:
+          {
+            boot.loader.systemd-boot.enable = true; # UEFI systems only
+            fileSystems."/".device = "/dev/disk/by-label/nixos";
+            system.stateVersion = "25.05";
+          };
       };
     };
 }

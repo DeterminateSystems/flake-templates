@@ -1,7 +1,10 @@
-{ modulesPath, inputs, ... }:
+{
+  config,
+  lib,
+  modulesPath,
+  ...
+}:
 
 {
-  boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
-  fileSystems."/".device = "/dev/disk/by-label/nixos";
-  system.stateVersion = "25.05";
+  # Provide any hardware configuration here
 }
