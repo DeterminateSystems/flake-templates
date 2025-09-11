@@ -13,7 +13,8 @@
     {
       # A minimal (but updatable!) NixOS configuration output by this flake
       nixosConfigurations.my-system = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux"; # change this if you're building for a different system type
+        # Change this if you're building for a system type other than x86 AMD Linux
+        system = "x86_64-linux";
 
         modules = [
           # Load the Determinate module, which provides Determinate Nix
@@ -22,25 +23,20 @@
           # Load the hardware configuration in a separate file (this is a common convention for NixOS)
           ./hardware-configuration.nix
 
-          # Modules defined in this flake
-          self.nixosModules.base
+          # This module provides a minimum viable NixOS configuration
+          (
+            { config, lib, ... }:
+            {
+              boot.loader.systemd-boot.enable = true; # UEFI systems only
+              fileSystems."/".device = "/dev/disk/by-label/nixos";
+              system.stateVersion = "25.05";
+            }
+          )
         ];
 
         specialArgs = {
           # Values to pass to modules
         };
-      };
-
-      # NixOS modules output by this flake
-      nixosModules = {
-        # This provides a minimum viable NixOS configuration
-        base =
-          { config, lib, ... }:
-          {
-            boot.loader.systemd-boot.enable = true; # UEFI systems only
-            fileSystems."/".device = "/dev/disk/by-label/nixos";
-            system.stateVersion = "25.05";
-          };
       };
     };
 }
