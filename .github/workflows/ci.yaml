@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  template-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -25,6 +25,11 @@ jobs:
         run: |
           nix flake show
 
+      - name: Check Nix formatting
+        run: |
+          git ls-files "*.nix" | \
+            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+
       - name: Ensure that all templates evaluate
         run: |
           for dir in $(ls -d */); do
@@ -36,7 +41,21 @@ jobs:
             )
           done
 
-      - name: Check Nix formatting
+      - name: Check Home Manager template
         run: |
-          git ls-files "*.nix" | \
-            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+          nix build --no-link --print-out-paths \
+            ./home-manager#homeConfigurations.just-me-123-x86_64-linux.activationPackage
+
+  macos-checks:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: DeterminateSystems/determinate-nix-action@main
+
+      - uses: DeterminateSystems/flakehub-cache-action@main
+
+      - name: Check nix-darwin template
+        run: |
+          nix build --no-link --print-out-paths \
+            ./nix-darwin#darwinConfigurations.just-me-123-aarch64-darwin.system

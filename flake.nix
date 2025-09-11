@@ -23,6 +23,12 @@
           '';
         };
 
+        home-manager = {
+          description = "TODO";
+          path = ./home-manager;
+          welcomeText = "TODO";
+        };
+
         nix-darwin = {
           description = "A flake template for nix-darwin and Determinate Nix";
           path = ./nix-darwin;
