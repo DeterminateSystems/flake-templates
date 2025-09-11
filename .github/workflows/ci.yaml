@@ -25,6 +25,11 @@ jobs:
         run: |
           nix flake show
 
+      - name: Check Nix formatting
+        run: |
+          git ls-files "*.nix" | \
+            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+
       - name: Ensure that all templates evaluate
         run: |
           for dir in $(ls -d */); do
@@ -38,12 +43,8 @@ jobs:
 
       - name: Check Home Manager template
         run: |
-          nix build ./home-manager#homeConfigurations.just-me-123-x86_64-linux.activationPackage
-
-      - name: Check Nix formatting
-        run: |
-          git ls-files "*.nix" | \
-            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+          nix build --no-link --print-out-paths \
+            ./home-manager#homeConfigurations.just-me-123-x86_64-linux.activationPackage
 
   macos-checks:
     runs-on: macos-latest
@@ -56,4 +57,5 @@ jobs:
 
       - name: Check nix-darwin template
         run: |
-          nix build ./nix-darwin#darwinConfigurations.just-me-123-aarch64-darwin.system
+          nix build --no-link --print-out-paths \
+            ./nix-darwin#darwinConfigurations.just-me-123-aarch64-darwin.system
