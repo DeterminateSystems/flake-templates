@@ -25,7 +25,7 @@
       username = "just-me-123";
 
       # Your system type (x86 AMD Linux here but make sure to change to match your system if need be)
-      system = "aarch64-darwin";
+      system = "x86_64-linux";
 
       # System-specific Nixpkgs
       pkgs = import inputs.nixpkgs { inherit system; };
