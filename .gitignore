@@ -1,1 +1,4 @@
 flake.lock
+
+# Nix artifacts
+result*

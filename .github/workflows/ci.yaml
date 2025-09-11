@@ -25,7 +25,12 @@ jobs:
         run: |
           nix flake show
 
-      - name: Ensure that all templates evaluate
+      - name: Check Nix formatting
+        run: |
+          git ls-files "*.nix" | \
+            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+
+      - name: Flake checks for all templates
         run: |
           for dir in $(ls -d */); do
             (
@@ -36,7 +41,6 @@ jobs:
             )
           done
 
-      - name: Check Nix formatting
+      - name: Check NixOS template
         run: |
-          git ls-files "*.nix" | \
-            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+          nix build --no-link ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
