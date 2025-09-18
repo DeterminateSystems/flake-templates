@@ -69,9 +69,9 @@
       # https://github.com/NixOS/rfcs/pull/166
 
       # To format all Nix files:
-      # git ls-files '*.nix' | xargs nix fmt
+      # git ls-files -z '*.nix' | xargs -0 -r nix fmt
       # To check formatting:
-      # git ls-files '*.nix' | xargs nixfmt --check
+      # git ls-files -z '*.nix' | xargs -0 -r nixfmt --check
       formatter = forEachSupportedSystem ({ pkgs, ... }: pkgs.nixfmt-rfc-style);
     };
 }
