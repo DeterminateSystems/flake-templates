@@ -50,8 +50,7 @@
               self.formatter.${system}
 
               # Other packages
-              curl
-              jq
+              ponysay
             ];
 
             # Set any environment variables for your development environment
