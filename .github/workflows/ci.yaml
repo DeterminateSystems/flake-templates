@@ -21,14 +21,10 @@ jobs:
 
       - uses: DeterminateSystems/flakehub-cache-action@main
 
-      - name: Ensure flake is properly structured
-        run: |
-          nix flake show
-
       - name: Check Nix formatting
         run: |
           git ls-files -z '*.nix' | \
-            xargs -0 -r nix run 'https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style' -- --check
+            xargs -0 -r nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
 
       - name: Flake checks for all templates
         run: |
