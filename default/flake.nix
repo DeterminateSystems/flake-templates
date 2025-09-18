@@ -70,7 +70,7 @@
       # To format all Nix files:
       # git ls-files -z '*.nix' | xargs -0 -r nix fmt
       # To check formatting:
-      # git ls-files -z '*.nix' | xargs -0 -r nix run .#formatter -- --check
+      # git ls-files -z '*.nix' | xargs -0 -r nix develop --command nixfmt --check
       formatter = forEachSupportedSystem ({ pkgs, ... }: pkgs.nixfmt-rfc-style);
     };
 }
