@@ -1,5 +1,5 @@
 {
-  description = "An empty flake template that you can adapt to your own environment";
+  description = "An NixOS flake template that you can adapt to your own environment";
 
   # Flake inputs
   inputs = {
@@ -23,7 +23,7 @@
           # Load the Determinate module, which provides Determinate Nix
           inputs.determinate.nixosModules.default
 
-          # Load the hardware configuration in a separate file (this is a common convention for NixOS)
+          # Load the hardware configuration from a separate file (a common convention for NixOS)
           ./hardware-configuration.nix
 
           # This module provides a minimum viable NixOS configuration
