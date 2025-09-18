@@ -1,3 +1,9 @@
 flake.lock
+<<<<<<< HEAD
 result*
 
+=======
+
+# Nix artifacts
+result*
+>>>>>>> origin/main

@@ -21,10 +21,6 @@ jobs:
 
       - uses: DeterminateSystems/flakehub-cache-action@main
 
-      - name: Ensure flake is properly structured
-        run: |
-          nix flake show
-
       - name: Check Nix formatting
         run: |
           git ls-files "*.nix" | \
@@ -46,6 +42,10 @@ jobs:
           nix build --no-link --print-out-paths \
             ./home-manager#homeConfigurations.just-me-123-x86_64-linux.activationPackage
 
+      - name: Check NixOS template
+        run: |
+          nix build --no-link ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
+
   macos-checks:
     runs-on: macos-latest
     steps:
@@ -59,3 +59,13 @@ jobs:
         run: |
           nix build --no-link --print-out-paths \
             ./nix-darwin#darwinConfigurations.just-me-123-aarch64-darwin.system
+
+      - name: Flake checks for all templates
+        run: |
+          shopt -s nullglob
+
+          for flake in */flake.nix; do
+            echo "Checking the template in directory ${flake}..."
+            nix flake check --all-systems "./${flake}"
+            echo "Successfully checked the template in ${flake} ✅"
+          done

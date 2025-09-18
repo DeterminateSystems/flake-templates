@@ -46,6 +46,23 @@
                 https://nix-darwin.github.io/nix-darwin/manual
           '';
         };
+
+        nixos = {
+          description = "A flake template for NixOS with Determinate Nix";
+          path = ./nixos;
+          welcomeText = ''
+            # Welcome to your new NixOS configuration flake ❄️🍁
+
+            The NixOS system output by this flake comes with Determinate Nix installed.
+            You can build the toplevel for the configuration like this:
+
+                nix build .#nixosConfigurations.my-system.config.system.build.toplevel
+
+            You can search for NixOS configuration options here:
+
+                https://search.nixos.org/options
+          '';
+        };
       };
     };
 }
