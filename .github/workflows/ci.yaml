@@ -21,22 +21,21 @@ jobs:
 
       - uses: DeterminateSystems/flakehub-cache-action@main
 
-      - name: Ensure flake is properly structured
-        run: |
-          nix flake show
-
-      - name: Ensure that all templates evaluate
-        run: |
-          for dir in $(ls -d */); do
-            (
-              echo "Checking the template in directory ${dir}"
-              cd $dir
-              nix flake check --all-systems
-              echo "Successfully checked the template in ${dir}"
-            )
-          done
-
       - name: Check Nix formatting
         run: |
           git ls-files -z '*.nix' | \
             xargs -0 -r nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+
+      - name: Flake checks for all templates
+        run: |
+          shopt -s nullglob
+
+          for flake in */flake.nix; do
+            echo "Checking the template in directory ${flake}..."
+            nix flake check --all-systems "./${flake}"
+            echo "Successfully checked the template in ${flake} ✅"
+          done
+
+      - name: Check NixOS template
+        run: |
+          nix build --no-link ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
