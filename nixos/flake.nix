@@ -31,7 +31,6 @@
             { config, lib, ... }:
             {
               boot.loader.systemd-boot.enable = true; # UEFI systems only
-              fileSystems."/".device = "/dev/disk/by-label/nixos";
               system.stateVersion = "25.05";
             }
           )

@@ -6,5 +6,7 @@
 }:
 
 {
-  # Provide any hardware configuration here
+  fileSystems."/".device = "/dev/disk/by-label/nixos";
+
+  # Provide any other hardware configuration here
 }
