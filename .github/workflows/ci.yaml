@@ -28,13 +28,14 @@ jobs:
 
       - name: Ensure that all templates evaluate
         run: |
-          for dir in $(ls -d */); do
-            (
-              echo "Checking the template in directory ${dir}"
-              cd $dir
-              nix flake check --all-systems
-              echo "Successfully checked the template in ${dir}"
-            )
+          set -euo pipefail
+          shopt -s nullglob
+
+          for flake in */flake.nix; do
+            dir="${flake%/flake.nix}"
+            echo "Checking the template in directory ${dir}"
+            nix flake check --all-systems "./${dir}"
+            echo "Successfully checked the template in ${dir} ✅"
           done
 
       - name: Check Home Manager template
@@ -59,13 +60,3 @@ jobs:
         run: |
           nix build --no-link --print-out-paths \
             ./nix-darwin#darwinConfigurations.just-me-123-aarch64-darwin.system
-
-      - name: Flake checks for all templates
-        run: |
-          shopt -s nullglob
-
-          for flake in */flake.nix; do
-            echo "Checking the template in directory ${flake}..."
-            nix flake check --all-systems "./${flake}"
-            echo "Successfully checked the template in ${flake} ✅"
-          done

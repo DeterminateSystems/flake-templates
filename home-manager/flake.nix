@@ -56,7 +56,7 @@
             # Shell script for applying the Home Manager configuration.
             # Run this to apply the configuration in this flake to your macOS system.
             (writeShellApplication {
-              name = "reload-home-manager-configuration";
+              name = "apply-home-manager-configuration";
               runtimeInputs = [
                 # Make the Home Manager package available in the script
                 inputs.home-manager.packages.${system}.home-manager
