@@ -121,7 +121,7 @@
             # Shell script for applying the nix-darwin configuration.
             # Run this to apply the configuration in this flake to your macOS system.
             (writeShellApplication {
-              name = "reload-nix-darwin-configuration";
+              name = "apply-nix-darwin-configuration";
               runtimeInputs = [
                 # Make the darwin-rebuild package available in the script
                 inputs.nix-darwin.packages.${system}.darwin-rebuild
