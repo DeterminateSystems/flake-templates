@@ -40,7 +40,7 @@
         modules = [
           (_: {
             home.homeDirectory = pkgs.lib.homeDirectory username;
-            home.stateVersion = "25.11";
+            home.stateVersion = "25.05";
             home.username = username;
           })
         ];
