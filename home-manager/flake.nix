@@ -1,5 +1,5 @@
 {
-  description = "A flake template for Home Manager";
+  description = "An Home Manager flake template that you can adapt to your own system";
 
   # Flake inputs
   inputs = {
@@ -8,11 +8,6 @@
     # Stable Home Manager
     home-manager = {
       url = "https://flakehub.com/f/nix-community/home-manager/0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # Determinate module
-    determinate = {
-      url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -24,21 +19,28 @@
       # Your system username
       username = "just-me-123";
 
-      # Your system type (x86 AMD Linux here but make sure to change to match your system if need be)
+      # Your system type (x86 AMD Linux here but make sure to change to match your system if you need to)
       system = "x86_64-linux";
 
       # System-specific Nixpkgs
-      pkgs = import inputs.nixpkgs { inherit system; };
+      pkgs = import inputs.nixpkgs {
+        inherit system;
+        # Enable using unfree packages
+        config.allowUnfree = true;
+        # Apply overlays
+        overlays = [ self.overlays.default ];
+      };
     in
     {
-      # nix-darwin configuration output
+      # Home Manager configuration output
       homeConfigurations."${username}-${system}" = inputs.home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
+        # Home Manager modules
         modules = [
           (_: {
-            home.homeDirectory = "/Users/${username}";
-            home.stateVersion = "25.05";
+            home.homeDirectory = pkgs.lib.homeDirectory username;
+            home.stateVersion = "25.11";
             home.username = username;
           })
         ];
@@ -72,5 +74,15 @@
             })
           ];
         };
+
+      # Nixpkgs overlays
+      overlays.default = final: prev: {
+        # Extra library functions
+        lib = prev.lib // {
+          # Generate the correct home directory on macOS and Linux
+          homeDirectory =
+            username: if prev.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
+        };
+      };
     };
 }

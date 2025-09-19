@@ -1,5 +1,5 @@
 {
-  description = "An NixOS flake template that you can adapt to your own environment";
+  description = "An NixOS flake template that you can adapt to your own system";
 
   # Flake inputs
   inputs = {
@@ -19,6 +19,7 @@
         # Change this if you're building for a system type other than x86 AMD Linux
         system = "x86_64-linux";
 
+        # NixOS modules
         modules = [
           # Load the Determinate module, which provides Determinate Nix
           inputs.determinate.nixosModules.default
