@@ -32,6 +32,8 @@
             {
               boot.loader.systemd-boot.enable = true; # UEFI systems only
               system.stateVersion = "25.05";
+
+              # Other configuration items here
             }
           )
         ];
