@@ -48,7 +48,8 @@ jobs:
 
       - name: Check NixOS template
         run: |
-          nix build --no-link ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
+          nix build --no-link --print-out-paths \
+            ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
 
   macos-checks:
     runs-on: macos-latest
