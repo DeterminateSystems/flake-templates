@@ -27,11 +27,9 @@
         inherit system;
         # Enable using unfree packages
         config.allowUnfree = true;
+        # Apply overlays
+        overlays = [ self.overlays.default ];
       };
-
-      # Helper function for generating the correct home directory on macOS and Linux
-      homeDirectory =
-        username: if prev.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
     in
     {
       # Home Manager configuration output
@@ -40,21 +38,11 @@
 
         # Home Manager modules
         modules = [
-          (
-            {
-              config,
-              lib,
-              pkgs,
-              ...
-            }:
-            {
-              home = {
-                homeDirectory = homeDirectory username;
-                stateVersion = "25.05";
-                inherit username;
-              };
-            }
-          )
+          (_: {
+            home.homeDirectory = pkgs.lib.homeDirectory username;
+            home.stateVersion = "25.05";
+            home.username = username;
+          })
         ];
       };
 
@@ -86,5 +74,15 @@
             })
           ];
         };
+
+      # Nixpkgs overlays
+      overlays.default = final: prev: {
+        # Extra library functions
+        lib = prev.lib // {
+          # Generate the correct home directory on macOS and Linux
+          homeDirectory =
+            username: if prev.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
+        };
+      };
     };
 }
