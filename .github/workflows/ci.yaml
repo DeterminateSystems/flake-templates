@@ -26,8 +26,8 @@ jobs:
 
       - name: Check Nix formatting
         run: |
-          git ls-files "*.nix" | \
-            xargs nix run "https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style" -- --check
+          git ls-files -z "*.nix" | \
+            xargs -0 nix run "https://flakehub.com/f/NixOS/nixpkgs/0.1.873798#nixfmt" -- --check
 
       - name: Ensure that all templates evaluate
         run: |
