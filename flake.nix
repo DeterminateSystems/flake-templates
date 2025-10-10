@@ -57,6 +57,12 @@
                 https://search.nixos.org/options
           '';
         };
+
+        rust = {
+          description = "TODO";
+          path = ./rust;
+          welcomeText = "TODO";
+        };
       };
     };
 }
