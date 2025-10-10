@@ -75,41 +75,32 @@
       packages = forEachSupportedSystem (
         { pkgs }:
         {
-          default = pkgs.buildRustPackage ./.;
+          default = ((inputs.crane.mkLib pkgs).overrideToolchain pkgs.rustToolchain).buildPackage {
+            pname = meta.name;
+            inherit (meta) version;
+            src = builtins.path {
+              name = "${meta.name}-source";
+              path = ./.;
+            };
+          };
         }
       );
 
-      # An overlay that puts the Rust toolchain in `pkgs`
-      overlays.default =
-        final: prev:
-        let
-          rustToolchain =
-            with inputs.fenix.packages.${prev.system};
-            combine (
-              with stable;
-              [
-                cargo
-                clippy
-                rustc
-                rustfmt
-                rust-src
-                rust-analyzer
-              ]
-            );
-        in
-        {
-          inherit rustToolchain;
-
-          buildRustPackage =
-            src:
-            ((inputs.crane.mkLib final).overrideToolchain rustToolchain).buildPackage ({
-              pname = meta.name;
-              inherit (meta) version;
-              src = builtins.path {
-                name = "${meta.name}-source";
-                path = src;
-              };
-            });
-        };
+      # An overlay that puts the Rust toolchain `pkgs`
+      overlays.default = final: prev: {
+        rustToolchain =
+          with inputs.fenix.packages.${prev.system};
+          combine (
+            with stable;
+            [
+              cargo
+              clippy
+              rustc
+              rustfmt
+              rust-src
+              rust-analyzer
+            ]
+          );
+      };
     };
 }
