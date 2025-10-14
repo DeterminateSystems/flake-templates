@@ -3,10 +3,10 @@
 
   # Flake inputs
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1"; # Unstable Nixpkgs
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # Stable Nixpkgs
     # Rust toolchain
     fenix = {
-      url = "https://flakehub.com/f/nix-community/fenix/0.1";
+      url = "https://flakehub.com/f/nix-community/fenix/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Rust builder
@@ -55,6 +55,15 @@
             # The Nix packages provided in the environment
             packages = with pkgs; [
               rustToolchain
+              rust-analyzer # Rust language server for IDEs
+              # Uncomment the lines below for some helpful tools:
+              # cargo-edit # Commands like `cargo add` and `cargo rm`
+              # bacon # For iterative development
+              # cargo-nextest # Rust testing tool
+              # cargo-audit # Check dependencies for vulnerabilities
+              # cargo-outdated # Show which dependencies have updates available
+              # cargo-deny # Lint your dependency graph
+              # cargo-expand # Show macro expansions
             ];
 
             # Set any environment variables for your development environment
@@ -75,7 +84,7 @@
       packages = forEachSupportedSystem (
         { pkgs }:
         {
-          default = ((inputs.crane.mkLib pkgs).overrideToolchain pkgs.rustToolchain).buildPackage {
+          default = pkgs.craneBuild.buildPackage {
             pname = meta.name;
             inherit (meta) version;
             src = builtins.path {
@@ -87,7 +96,9 @@
       );
 
       # An overlay that puts the Rust toolchain `pkgs`
-      overlays.default = final: prev: {
+      overlays.default = final: prev: rec {
+        craneBuild = ((inputs.crane.mkLib final).overrideToolchain rustToolchain);
+
         rustToolchain =
           with inputs.fenix.packages.${prev.system};
           combine (
@@ -98,7 +109,6 @@
               rustc
               rustfmt
               rust-src
-              rust-analyzer
             ]
           );
       };
