@@ -2,16 +2,7 @@
   description = "A Rust flake template that you can adapt to your own environment";
 
   # Flake inputs
-  inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # Stable Nixpkgs
-    # Rust toolchain
-    fenix = {
-      url = "https://flakehub.com/f/nix-community/fenix/0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # Rust builder
-    crane.url = "https://flakehub.com/f/ipetkov/crane/0";
-  };
+  inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # Stable Nixpkgs
 
   # Flake outputs
   outputs =
@@ -36,14 +27,9 @@
               inherit system;
               # Enable using unfree packages
               config.allowUnfree = true;
-              overlays = [ self.overlays.default ];
             };
           }
         );
-
-      lastModifiedDate = inputs.self.lastModifiedDate or inputs.self.lastModified or "19700101";
-      version = "${builtins.substring 0 8 lastModifiedDate}-${inputs.self.shortRev or "dirty"}";
-      meta = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package;
     in
     {
       # Development environments output by this flake
@@ -54,7 +40,10 @@
           default = pkgs.mkShell {
             # The Nix packages provided in the environment
             packages = with pkgs; [
-              rustToolchain
+              cargo
+              rustc
+              clippy
+              rustfmt
               rust-analyzer # Rust language server for IDEs
               # Uncomment the lines below for some helpful tools:
               # cargo-edit # Commands like `cargo add` and `cargo rm`
@@ -68,7 +57,7 @@
 
             # Set any environment variables for your development environment
             env = {
-              RUST_SRC_PATH = "${pkgs.rustToolchain}/lib/rustlib/src/rust/library";
+              RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
             };
 
             # Add any shell logic you want executed when the environment is activated
@@ -84,33 +73,20 @@
       packages = forEachSupportedSystem (
         { pkgs }:
         {
-          default = pkgs.craneBuild.buildPackage {
-            pname = meta.name;
-            inherit (meta) version;
-            src = builtins.path {
-              name = "${meta.name}-source";
-              path = ./.;
+          # Build the package using Nixpkgs' built-in Rust helpers
+          default =
+            let
+              # Get information about the package from Cargo.toml
+              meta = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package;
+            in
+            pkgs.rustPlatform.buildRustPackage {
+              inherit (meta) name version;
+              src = builtins.path {
+                path = ./.;
+              };
+              cargoLock.lockFile = ./Cargo.lock;
             };
-          };
         }
       );
-
-      # An overlay that puts the Rust toolchain `pkgs`
-      overlays.default = final: prev: rec {
-        craneBuild = ((inputs.crane.mkLib final).overrideToolchain rustToolchain);
-
-        rustToolchain =
-          with inputs.fenix.packages.${prev.system};
-          combine (
-            with stable;
-            [
-              cargo
-              clippy
-              rustc
-              rustfmt
-              rust-src
-            ]
-          );
-      };
     };
 }
