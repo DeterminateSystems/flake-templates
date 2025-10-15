@@ -3,14 +3,14 @@
 
   # Flake inputs
   inputs = {
-    # Stable Nixpkgs
+    # Stable Nixpkgs (use 0.1 for unstable)
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    # Stable nix-darwin
+    # Stable nix-darwin (use 0.1 for unstable)
     nix-darwin = {
       url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Determinate module
+    # Determinate 3.* module
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
       inputs.nixpkgs.follows = "nixpkgs";
