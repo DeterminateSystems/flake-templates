@@ -70,14 +70,15 @@
                 inputs.home-manager.packages.${system}.home-manager
               ];
               text = ''
-                echo "> Applying Home Manager configuration..."
+                echo "> Running `home-manager switch` to apply home configuration..."
 
-                echo "> Running home-manager switch..."
-                home-manager switch --flake ".#${username}-${system}"
-
-                echo "> home-manager switch was successful ✅"
-
-                echo "> System home config was successfully applied 🚀"
+                if home-manager switch --flake ".#${username}-${system}"; then
+                  echo "> home-manager switch was successful ✅"
+                  echo "> system home config was successfully applied 🚀"
+                else
+                  echo "> home-manager switch failed ❌"
+                  exit 1
+                fi
               '';
             })
           ];
