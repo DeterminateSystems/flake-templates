@@ -59,9 +59,21 @@
         };
 
         rust = {
-          description = "TODO";
+          description = "A flake template for Rust";
           path = ./rust;
-          welcomeText = "TODO";
+          welcomeText = ''
+            # Welcome to your new NixOS configuration flake ❄️🦀
+
+            To activate your new flake's development environment, run `nix develop` or `direnv allow` if you use direnv.
+
+            To run the Rust program in this template (you should a warm greeting):
+
+                nix develop --command cargo run
+
+            To build the Rust program using Nix:
+
+                nix build
+          '';
         };
       };
     };
