@@ -1,5 +1,5 @@
 {
-  description = "An Home Manager flake template that you can adapt to your own system";
+  description = "A Home Manager flake template that you can adapt to your own system";
 
   # Flake inputs
   inputs = {
@@ -19,7 +19,7 @@
       # Your system username
       username = "just-me-123";
 
-      # Your system type (x86 AMD Linux here but make sure to change to match your system if you need to)
+      # Your system type (x86 Linux here but make sure to change to match your system if you need to)
       system = "x86_64-linux";
 
       # System-specific Nixpkgs
@@ -62,7 +62,8 @@
         pkgs.mkShellNoCC {
           packages = with pkgs; [
             # Shell script for applying the Home Manager configuration.
-            # Run this to apply the configuration in this flake to your macOS system.
+            # Run this to apply the configuration in this flake to your macOS system:
+            # nix develop --command apply-home-manager-configuration
             (writeShellApplication {
               name = "apply-home-manager-configuration";
               runtimeInputs = [
@@ -88,7 +89,7 @@
       overlays.default = final: prev: {
         # Extra library functions
         lib = prev.lib // {
-          # Generate the correct home directory on macOS and Linux
+          # Generate the correct home directory on both macOS and Linux
           homeDirectory =
             username: if prev.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
         };
