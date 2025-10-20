@@ -136,7 +136,20 @@
                 echo "> macOS config was successfully applied 🚀"
               '';
             })
+
+            self.formatter.${system}
           ];
         };
+
+      # Nix formatter
+
+      # This applies the formatter that follows RFC 166, which defines a standard format:
+      # https://github.com/NixOS/rfcs/pull/166
+
+      # To format all Nix files:
+      # git ls-files -z '*.nix' | xargs -0 -r nix fmt
+      # To check formatting:
+      # git ls-files -z '*.nix' | xargs -0 -r nix develop --command nixfmt --check
+      formatter = forEachSupportedSystem ({ pkgs, ... }: pkgs.nixfmt-rfc-style);
     };
 }
