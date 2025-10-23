@@ -12,8 +12,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  template-checks:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
@@ -21,25 +24,46 @@ jobs:
 
       - uses: DeterminateSystems/flakehub-cache-action@main
 
-      - name: Ensure flake is properly structured
-        run: |
-          nix flake show
-
       - name: Check Nix formatting
         run: |
-          git ls-files -z '*.nix' | \
-            xargs -0 -r nix run 'https://flakehub.com/f/NixOS/nixpkgs/0.2505.808723#nixfmt-rfc-style' -- --check
+          git ls-files -z "*.nix" | \
+            xargs -0 nix run "https://flakehub.com/f/NixOS/nixpkgs/0.1.873798#nixfmt" -- --check
 
-      - name: Flake checks for all templates
+      - name: Ensure that all templates evaluate
         run: |
+          set -euo pipefail
           shopt -s nullglob
 
           for flake in */flake.nix; do
-            echo "Checking the template in directory ${flake}..."
-            nix flake check --all-systems "./${flake}"
-            echo "Successfully checked the template in ${flake} ✅"
+            dir="${flake%/flake.nix}"
+            echo "Checking the template in directory ${dir}"
+            nix flake check --all-systems "./${dir}"
+            echo "Successfully checked the template in ${dir} ✅"
           done
+
+      - name: Check Home Manager template
+        run: |
+          nix build --no-link --print-out-paths \
+            ./home-manager#homeConfigurations.just-me-123-x86_64-linux.activationPackage
 
       - name: Check NixOS template
         run: |
-          nix build --no-link ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
+          nix build --no-link --print-out-paths \
+            ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
+
+  macos-checks:
+    runs-on: macos-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: DeterminateSystems/determinate-nix-action@main
+
+      - uses: DeterminateSystems/flakehub-cache-action@main
+
+      - name: Check nix-darwin template
+        run: |
+          nix build --no-link --print-out-paths \
+            ./nix-darwin#darwinConfigurations.just-me-123-aarch64-darwin.system
