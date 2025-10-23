@@ -3,11 +3,9 @@
 
   # Flake inputs
   inputs = {
-    # Stable Nixpkgs
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    # Stable Home Manager
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # Stable Nixpkgs
     home-manager = {
-      url = "https://flakehub.com/f/nix-community/home-manager/0";
+      url = "https://flakehub.com/f/nix-community/home-manager/0"; # Stable Home Manager
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -46,9 +44,16 @@
               ...
             }:
             {
-              home.homeDirectory = pkgs.lib.homeDirectory username;
-              home.stateVersion = "25.05";
-              home.username = username;
+              # Minimum viable configuration
+              home = {
+                homeDirectory = pkgs.lib.homeDirectory username;
+                stateVersion = "25.05";
+                inherit username;
+              };
+
+              # From there, it's up to you!
+              # https://nix-community.github.io/home-manager
+              # https://nix-community.github.io/home-manager/options.xhtml
             }
           )
         ];
