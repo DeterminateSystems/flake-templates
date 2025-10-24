@@ -13,11 +13,18 @@
   # Flake outputs
   outputs =
     { self, ... }@inputs:
+    let
+      # Change this if you're building for a system type other than x86 AMD Linux
+      system = "x86_64-linux";
+
+      # The flake output name of your system (`nixosConfigurations.${key}`). Change this
+      # to make it less generic
+      name = "my-system";
+    in
     {
       # A minimal (but updatable!) NixOS configuration output by this flake
-      nixosConfigurations.my-system = inputs.nixpkgs.lib.nixosSystem {
-        # Change this if you're building for a system type other than x86 AMD Linux
-        system = "x86_64-linux";
+      nixosConfigurations.${name} = inputs.nixpkgs.lib.nixosSystem {
+        inherit system;
 
         modules = [
           # Load the Determinate module, which provides Determinate Nix
@@ -40,5 +47,16 @@
           # Values to pass to modules
         };
       };
+
+      # Nix formatter
+
+      # This applies the formatter that follows RFC 166, which defines a standard format:
+      # https://github.com/NixOS/rfcs/pull/166
+
+      # To format all Nix files:
+      # git ls-files -z '*.nix' | xargs -0 -r nix fmt
+      # To check formatting:
+      # git ls-files -z '*.nix' | xargs -0 -r nix develop --command nixfmt --check
+      formatter.${system} = inputs.nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
     };
 }

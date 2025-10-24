@@ -22,6 +22,7 @@
         inputs.nixpkgs.lib.genAttrs supportedSystems (
           system:
           f {
+            inherit system;
             # Provides a system-specific, configured Nixpkgs
             pkgs = import inputs.nixpkgs {
               inherit system;
@@ -33,13 +34,24 @@
     in
     {
       # Development environments output by this flake
+
+      # To activate the default environment:
+      # nix develop
+      # Or if you use direnv:
+      # direnv allow
       devShells = forEachSupportedSystem (
-        { pkgs }:
+        { pkgs, system }:
         {
           # Run `nix develop` to activate this environment or `direnv allow` if you have direnv installed
-          default = pkgs.mkShell {
+          default = pkgs.mkShellNoCC {
             # The Nix packages provided in the environment
-            packages = with pkgs; [ ];
+            packages = with pkgs; [
+              # Add the flake's formatter to your project's environment
+              self.formatter.${system}
+
+              # Other packages
+              ponysay
+            ];
 
             # Set any environment variables for your development environment
             env = { };
@@ -49,5 +61,16 @@
           };
         }
       );
+
+      # Nix formatter
+
+      # This applies the formatter that follows RFC 166, which defines a standard format:
+      # https://github.com/NixOS/rfcs/pull/166
+
+      # To format all Nix files:
+      # git ls-files -z '*.nix' | xargs -0 -r nix fmt
+      # To check formatting:
+      # git ls-files -z '*.nix' | xargs -0 -r nix develop --command nixfmt --check
+      formatter = forEachSupportedSystem ({ pkgs, ... }: pkgs.nixfmt-rfc-style);
     };
 }
