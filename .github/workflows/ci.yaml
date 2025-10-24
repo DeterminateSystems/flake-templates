@@ -42,4 +42,15 @@ jobs:
 
       - name: Check NixOS template
         run: |
+          echo "Building NixOS toplevel ❄️"
           nix build --no-link ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
+          echo "NixOS template OK ✅"
+
+      - name: Check Rust template
+        run: |
+          system=$(nix eval --raw --impure --expr 'builtins.currentSystem')
+          echo "Build Rust dev shell 🦀"
+          nix build "./rust#devShells.${system}.default"
+          echo "Building Rust package 🦀"
+          nix build './rust'
+          echo "Rust template OK ✅"
