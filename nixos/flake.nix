@@ -1,5 +1,5 @@
 {
-  description = "An NixOS flake template that you can adapt to your own environment";
+  description = "An NixOS flake template that you can adapt to your own system";
 
   # Flake inputs
   inputs = {
@@ -26,6 +26,7 @@
       nixosConfigurations.${name} = inputs.nixpkgs.lib.nixosSystem {
         inherit system;
 
+        # NixOS modules
         modules = [
           # Load the Determinate module, which provides Determinate Nix
           inputs.determinate.nixosModules.default

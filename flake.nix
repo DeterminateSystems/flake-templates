@@ -23,6 +23,25 @@
           '';
         };
 
+        home-manager = {
+          description = "A flake template for Home Manager";
+          path = ./home-manager;
+          welcomeText = ''
+            # Welcome to your new Home Manager configuration flake ❄️🍁🍎🐧
+
+            Before applying this configuration, change the `username` and `system` to values that make sense for your machine.
+
+            To apply the Home Manager configuration in this flake, run the supplied script:
+
+                nix develop --command apply-home-manager-configuration
+
+            For ideas about how to configure your system, consult the Home Manager manual and reference documentation:
+
+                https://nix-community.github.io/home-manager
+                https://nix-community.github.io/home-manager/options.xhtml
+          '';
+        };
+
         nix-darwin = {
           description = "A flake template for nix-darwin and Determinate Nix";
           path = ./nix-darwin;
@@ -33,9 +52,9 @@
 
             To apply the nix-darwin configuration in this flake, run the supplied script:
 
-                nix develop --command reload-nix-darwin-configuration
+                nix develop --command apply-nix-darwin-configuration
 
-            For ideas on how to configure your system, consult the nix-darwin reference documentation:
+            For ideas about how to configure your system, consult the nix-darwin reference documentation:
 
                 https://nix-darwin.github.io/nix-darwin/manual
           '';
