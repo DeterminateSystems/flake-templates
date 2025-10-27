@@ -26,8 +26,8 @@ jobs:
 
       - name: Check Nix formatting
         run: |
-          git ls-files -z "*.nix" | \
-            xargs -0 nix run "https://flakehub.com/f/NixOS/nixpkgs/0.1.873798#nixfmt" -- --check
+          git ls-files -z '*.nix' | \
+            xargs -0 -r nix run "https://flakehub.com/f/NixOS/nixpkgs/=0.1.883951#nixfmt" -- --check
 
       - name: Ensure that all templates evaluate
         run: |
@@ -41,15 +41,37 @@ jobs:
             echo "Successfully checked the template in ${dir} ✅"
           done
 
+      - name: Check Rust template
+        run: |
+          system=$(nix eval --raw --impure --expr 'builtins.currentSystem')
+
+          echo "Building Rust dev shell 🦀"
+
+          nix build "./rust#devShells.${system}.default"
+
+          echo "Building Rust package 🦀"
+
+          nix build "./rust"
+
+          echo "Rust template OK ✅"
+
       - name: Check Home Manager template
         run: |
+          echo "Building Home Manager activation package 🏡"
+
           nix build --no-link --print-out-paths \
             ./home-manager#homeConfigurations.just-me-123-x86_64-linux.activationPackage
 
+          echo "Home Manager template OK ✅"
+
       - name: Check NixOS template
         run: |
+          echo "Building NixOS toplevel ❄️"
+
           nix build --no-link --print-out-paths \
             ./nixos#nixosConfigurations.my-system.config.system.build.toplevel
+
+          echo "NixOS template OK ✅"
 
   macos-checks:
     runs-on: macos-latest
@@ -65,5 +87,9 @@ jobs:
 
       - name: Check nix-darwin template
         run: |
+          echo "Building nix-darwin system output 🍎"
+
           nix build --no-link --print-out-paths \
             ./nix-darwin#darwinConfigurations.just-me-123-aarch64-darwin.system
+
+          echo "nix-darwin template OK ✅"

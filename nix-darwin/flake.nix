@@ -3,14 +3,14 @@
 
   # Flake inputs
   inputs = {
-    # Stable Nixpkgs
+    # Stable Nixpkgs (use 0.1 for unstable)
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    # Stable nix-darwin
+    # Stable nix-darwin (use 0.1 for unstable)
     nix-darwin = {
       url = "https://flakehub.com/f/nix-darwin/nix-darwin/0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Determinate module
+    # Determinate 3.* module
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -136,7 +136,20 @@
                 echo "> macOS config was successfully applied 🚀"
               '';
             })
+
+            self.formatter.${system}
           ];
         };
+
+      # Nix formatter
+
+      # This applies the formatter that follows RFC 166, which defines a standard format:
+      # https://github.com/NixOS/rfcs/pull/166
+
+      # To format all Nix files:
+      # git ls-files -z '*.nix' | xargs -0 -r nix fmt
+      # To check formatting:
+      # git ls-files -z '*.nix' | xargs -0 -r nix develop --command nixfmt --check
+      formatter.${system} = inputs.nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
     };
 }

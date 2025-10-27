@@ -1,5 +1,5 @@
 {
-  description = "An empty flake template that you can adapt to your own environment";
+  description = "A Rust flake template that you can adapt to your own environment";
 
   # Flake inputs
   inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # Stable Nixpkgs (use 0.1 for unstable)
@@ -22,7 +22,6 @@
         inputs.nixpkgs.lib.genAttrs supportedSystems (
           system:
           f {
-            inherit system;
             # Provides a system-specific, configured Nixpkgs
             pkgs = import inputs.nixpkgs {
               inherit system;
@@ -34,31 +33,59 @@
     in
     {
       # Development environments output by this flake
-
-      # To activate the default environment:
-      # nix develop
-      # Or if you use direnv:
-      # direnv allow
       devShells = forEachSupportedSystem (
-        { pkgs, system }:
+        { pkgs }:
         {
           # Run `nix develop` to activate this environment or `direnv allow` if you have direnv installed
-          default = pkgs.mkShellNoCC {
+          default = pkgs.mkShell {
             # The Nix packages provided in the environment
             packages = with pkgs; [
-              # Add the flake's formatter to your project's environment
-              self.formatter.${system}
-
-              # Other packages
-              ponysay
+              cargo
+              rustc
+              clippy
+              rustfmt
+              rust-analyzer # Rust language server for IDEs
+              # Uncomment the lines below for some helpful tools:
+              # cargo-edit # Commands like `cargo add` and `cargo rm`
+              # bacon # For iterative development
+              # cargo-nextest # Rust testing tool
+              # cargo-audit # Check dependencies for vulnerabilities
+              # cargo-outdated # Show which dependencies have updates available
+              # cargo-deny # Lint your dependency graph
+              # cargo-expand # Show macro expansions
             ];
 
             # Set any environment variables for your development environment
-            env = { };
+            env = {
+              RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+            };
 
             # Add any shell logic you want executed when the environment is activated
-            shellHook = "";
+            shellHook = ''
+              echo "Rust toolchain 🦀"
+              cargo --version
+            '';
           };
+        }
+      );
+
+      # Package outputs
+      packages = forEachSupportedSystem (
+        { pkgs }:
+        {
+          # Build the package using Nixpkgs' built-in Rust helpers
+          default =
+            let
+              # Get information about the package from Cargo.toml
+              meta = (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package;
+            in
+            pkgs.rustPlatform.buildRustPackage {
+              inherit (meta) name version;
+              src = builtins.path {
+                path = ./.;
+              };
+              cargoLock.lockFile = ./Cargo.lock;
+            };
         }
       );
 
