@@ -28,8 +28,7 @@
       # Your system username
       username = "just-me-123";
 
-      # Your system type (Apple Silicon here)
-      # Change this to `x86_64-darwin` for Intel macOS
+      # Your system type (Apple Silicon)
       system = "aarch64-darwin";
     in
     {
