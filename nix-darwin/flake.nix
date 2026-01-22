@@ -40,7 +40,7 @@
           inputs.determinate.darwinModules.default
           # Apply the modules output by this flake
           self.darwinModules.base
-          self.darwinModules.nixConfig
+          self.darwinModules.determinateNixConfig
           # Apply any other imported modules here
 
           # In addition to adding modules in the style above, you can also
@@ -83,8 +83,8 @@
             # See here: https://nix-darwin.github.io/nix-darwin/manual
           };
 
-        # Nix configuration
-        nixConfig =
+        # Determinate Nix configuration
+        determinateNixConfig =
           {
             config,
             pkgs,
@@ -92,18 +92,20 @@
             ...
           }:
           {
-            # Let Determinate Nix handle your Nix configuration
-            nix.enable = false;
+            determinateNix = {
+              # Enable Determinate to handle your Nix configuration
+              enable = true;
 
-            # Custom Determinate Nix settings written to /etc/nix/nix.custom.conf
-            determinate-nix.customSettings = {
-              # Enables parallel evaluation (remove this setting or set the value to 1 to disable)
-              eval-cores = 0;
-              extra-experimental-features = [
-                "build-time-fetch-tree" # Enables build-time flake inputs
-                "parallel-eval" # Enables parallel evaluation
-              ];
-              # Other settings
+              # Custom Determinate Nix settings written to /etc/nix/nix.custom.conf
+              customSettings = {
+                # Enables parallel evaluation (remove this setting or set the value to 1 to disable)
+                eval-cores = 0;
+                extra-experimental-features = [
+                  "build-time-fetch-tree" # Enables build-time flake inputs
+                  "parallel-eval" # Enables parallel evaluation
+                ];
+                # Other settings
+              };
             };
           };
 
