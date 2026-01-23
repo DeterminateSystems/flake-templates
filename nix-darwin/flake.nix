@@ -102,7 +102,6 @@
                 eval-cores = 0;
                 extra-experimental-features = [
                   "build-time-fetch-tree" # Enables build-time flake inputs
-                  "parallel-eval" # Enables parallel evaluation
                 ];
                 # Other settings
               };
