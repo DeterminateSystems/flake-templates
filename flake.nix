@@ -94,6 +94,20 @@
                 nix build
           '';
         };
+
+        flake-schemas = {
+          description = "TODO";
+          path = ./flake-schemas;
+          welcomeText = ''
+            # Welcome to your new flake with custom schemas ❄️🗺️
+
+            This flake shows you how to use non-default flake schemas.
+
+            To see the flake outputs:
+
+                nix flake show
+          '';
+        };
       };
     };
 }
