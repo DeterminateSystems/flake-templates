@@ -96,7 +96,7 @@
         };
 
         flake-schemas = {
-          description = "TODO";
+          description = "A template for flakes using non-default flake schemas";
           path = ./flake-schemas;
           welcomeText = ''
             # Welcome to your new flake with custom schemas ❄️🗺️
