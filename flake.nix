@@ -94,6 +94,26 @@
                 nix build
           '';
         };
+
+        flake-schemas = {
+          description = "A template for flakes using non-default flake schemas";
+          path = ./flake-schemas;
+          welcomeText = ''
+            # Welcome to your new flake with custom schemas ❄️🗺️
+
+            This flake template shows you how to use non-default flake schemas.
+            You can find the default schemas at https://github.com/DeterminateSystems/flake-schemas.
+            If you have flake outputs that don't fit these defaults, this template is for you!
+
+            To see the flake outputs:
+
+                nix flake show
+
+            To see the flake outputs as JSON:
+
+                nix flake show --json
+          '';
+        };
       };
     };
 }
