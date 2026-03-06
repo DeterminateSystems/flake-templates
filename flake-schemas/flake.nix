@@ -1,4 +1,8 @@
 {
+  # This flake template shows you how to use non-default flake schemas.
+  # Check the default schemas to see if your output types are already covered:
+  # https://github.com/DeterminateSystems/flake-schemas
+
   description = "A template for flakes using non-default flake schemas";
 
   # Flake inputs
