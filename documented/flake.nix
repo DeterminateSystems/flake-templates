@@ -1,5 +1,5 @@
 {
-  description = "An empty flake template that you can adapt to your own environment";
+  description = "A minimal flake template that you can adapt to your own project";
 
   # Flake inputs
   inputs.nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0"; # Stable Nixpkgs (use 0.1 for unstable)
