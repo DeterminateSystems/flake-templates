@@ -97,7 +97,7 @@
 
               To activate your new flake's development environment, run `nix develop` or `direnv allow` if you use direnv.
 
-              To run the Rust program in this template (you should a warm greeting):
+              To run the Rust program in this template (you should see a warm greeting):
 
                   nix develop --command cargo run
 
