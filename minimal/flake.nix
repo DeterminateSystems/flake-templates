@@ -6,6 +6,8 @@
   outputs =
     { self, ... }@inputs:
     let
+      inherit (inputs.nixpkgs) lib;
+
       supportedSystems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -14,7 +16,7 @@
 
       forEachSupportedSystem =
         f:
-        inputs.nixpkgs.lib.genAttrs supportedSystems (
+        lib.genAttrs supportedSystems (
           system:
           f {
             inherit system;
